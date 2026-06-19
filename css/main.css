@@ -1,14 +1,5 @@
-/* css/main.css */
-body {
-  font-family: sans-serif;
-  margin: 0;
-  padding: 0;
-  /* Let Tailwind light/dark classes control colors */
-  background: var(--bg, #111827);
-  color: var(--text, #f3f4f6);
-/* css/main.css - simplified: color tokens are provided by JS (js/ui.js)
-   This file only references CSS variables; palette values are set at runtime.
-*/
+/* css/main.css - color tokens are provided at runtime by js/ui.js.
+   This file only references CSS variables; palette values are set in JS. */
 
 body {
   font-family: sans-serif;

@@ -1,0 +1,7 @@
+# User-data snapshots created by the app's backup/sync feature
+backups/
+data/backup*.json
+
+# Tooling
+node_modules/
+.DS_Store

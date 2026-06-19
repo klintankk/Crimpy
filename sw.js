@@ -1,11 +1,13 @@
 // sw.js
-const CACHE = 'crimpd-v7';
+const CACHE = 'crimpd-v8';
 const ASSETS = [
   './',
   './index.html',
   './manifest.json',
   './favicon.ico',
+  './css/tailwind.css',
   './css/main.css',
+  './icons/sprite.svg',
   './js/app.js',
   './js/router.js',
   './js/storage.js',
@@ -14,6 +16,9 @@ const ASSETS = [
   './js/calendar.js',
   './js/logger.js',
   './js/charts.js',
+  './js/chartsConfig.js',
+  './js/ui.js',
+  './js/repsSetUI.js',
   './js/utils.js'
 ];
 

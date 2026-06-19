@@ -1,0 +1,434 @@
+{
+  "plan": {
+    "2026-01-03": [
+      "48fb9735-f5cb-42c7-a760-9252acffd091"
+    ],
+    "2026-01-04": [
+      "97a862cc-ced3-43b1-a3f3-674a0a9d437e",
+      "48fb9735-f5cb-42c7-a760-9252acffd091"
+    ],
+    "2026-01-11": [
+      "activity:climbing"
+    ]
+  },
+  "planRecurring": {
+    "0": [
+      "0e4adb9e-37ef-4697-a180-0d93927f7db6"
+    ],
+    "1": [
+      "0e4adb9e-37ef-4697-a180-0d93927f7db6"
+    ],
+    "2": [
+      "activity:board climbing",
+      "0e4adb9e-37ef-4697-a180-0d93927f7db6"
+    ],
+    "3": [
+      "0e4adb9e-37ef-4697-a180-0d93927f7db6"
+    ],
+    "4": [
+      "activity:climbing",
+      "0e4adb9e-37ef-4697-a180-0d93927f7db6",
+      "809403ab-6e27-4658-ae39-bf8c7985c277"
+    ],
+    "5": [
+      "0e4adb9e-37ef-4697-a180-0d93927f7db6"
+    ],
+    "6": [
+      "48fb9735-f5cb-42c7-a760-9252acffd091",
+      "0e4adb9e-37ef-4697-a180-0d93927f7db6"
+    ]
+  },
+  "planCompleted": {
+    "2026-01-04": [
+      "48fb9735-f5cb-42c7-a760-9252acffd091"
+    ],
+    "2026-01-05": [
+      "48fb9735-f5cb-42c7-a760-9252acffd091",
+      "0e4adb9e-37ef-4697-a180-0d93927f7db6"
+    ],
+    "2026-01-06": [
+      "activity:test",
+      "activity:board climbing",
+      "0e4adb9e-37ef-4697-a180-0d93927f7db6"
+    ],
+    "2026-01-07": [
+      "48fb9735-f5cb-42c7-a760-9252acffd091",
+      "activity:recovery",
+      "0e4adb9e-37ef-4697-a180-0d93927f7db6"
+    ],
+    "2026-01-08": [
+      "809403ab-6e27-4658-ae39-bf8c7985c277",
+      "activity:climbing"
+    ],
+    "2026-01-09": [
+      "0e4adb9e-37ef-4697-a180-0d93927f7db6"
+    ],
+    "2026-01-10": [
+      "0e4adb9e-37ef-4697-a180-0d93927f7db6",
+      "48fb9735-f5cb-42c7-a760-9252acffd091"
+    ],
+    "2026-01-11": [
+      "0e4adb9e-37ef-4697-a180-0d93927f7db6",
+      "activity:climbing"
+    ],
+    "2026-01-12": [
+      "0e4adb9e-37ef-4697-a180-0d93927f7db6"
+    ],
+    "2026-01-13": [
+      "0e4adb9e-37ef-4697-a180-0d93927f7db6",
+      "activity:board climbing"
+    ],
+    "2026-01-15": [
+      "0e4adb9e-37ef-4697-a180-0d93927f7db6",
+      "activity:climbing"
+    ],
+    "2026-01-16": [
+      "0e4adb9e-37ef-4697-a180-0d93927f7db6"
+    ],
+    "2026-01-17": [
+      "0e4adb9e-37ef-4697-a180-0d93927f7db6"
+    ],
+    "2026-01-19": [
+      "0e4adb9e-37ef-4697-a180-0d93927f7db6"
+    ]
+  },
+  "planNotes": {
+    "2026-01-04": "Today was decent big boi MEEOW    aaa",
+    "2026-01-06": "Session at klätterlabbet, väldigt jävla smutsigt, hittade knappt greppen. Klättrade på världens tredje smutsigaste moonboard enligt Alex handhold",
+    "2026-01-08": "Session at backaboulder, did some 6a-6b tricky slabs, finished off all 6b+ BM on 2024",
+    "2026-01-11": "Session with fuad, barely did any climbs, or so it felt like at least, but it was fun",
+    "2026-01-15": "Session with Jan hendrik at luchthaven, decent gym, a lot of stairs. \nFlashed a 7a classic on 30deg tension board\nTension board is quite fun",
+    "2026-01-18": "Session at sterk with fuad\nFlashed a bm 7a on the 2024 \n\nDid 6s 10 mm bw 6 sets"
+  },
+  "activities": [],
+  "log": [
+    {
+      "id": "754315f2-a0d3-44ac-800f-567ac2279429",
+      "date": "2026-01-05T23:35:01.784Z",
+      "isPR": false,
+      "details": [
+        "Set 1: 30 s",
+        "Set 2: 30 s"
+      ],
+      "summary": "2 sets × 30 s",
+      "bestValue": 30,
+      "workoutId": "0e4adb9e-37ef-4697-a180-0d93927f7db6",
+      "workoutName": "Science fingerboard"
+    },
+    {
+      "date": "2026-01-07T17:34:19.562Z",
+      "workoutId": "0e4adb9e-37ef-4697-a180-0d93927f7db6",
+      "workoutName": "Science fingerboard",
+      "bestValue": 30,
+      "isPR": false,
+      "summary": "2 sets × 30 s — At hugo",
+      "details": [
+        "Set 1: 30 s",
+        "Set 2: 30 s"
+      ]
+    },
+    {
+      "date": "2026-01-06T00:00:00.000Z",
+      "workoutId": null,
+      "workoutName": "",
+      "bestValue": 0,
+      "isPR": false,
+      "summary": "Session at klätterlabbet, väldigt jävla smutsigt, hittade knappt greppen. Klättrade på världens tredje smutsigaste moonboard enligt Alex handhold",
+      "details": []
+    },
+    {
+      "date": "2026-01-08T18:04:36.453Z",
+      "workoutId": "809403ab-6e27-4658-ae39-bf8c7985c277",
+      "workoutName": "Pullups",
+      "bestValue": 36,
+      "isPR": true,
+      "summary": "5 sets: 4 reps @ 36 kg – NEW PR",
+      "details": [
+        "Set 1: 4 reps @ 36 kg",
+        "Set 2: 4 reps @ 36 kg",
+        "Set 3: 4 reps @ 36 kg",
+        "Set 4: 4 reps @ 36 kg",
+        "Set 5: 4 reps @ 36 kg"
+      ]
+    },
+    {
+      "date": "2026-01-08T00:00:00.000Z",
+      "workoutId": null,
+      "workoutName": "",
+      "bestValue": 0,
+      "isPR": false,
+      "summary": "Session at backaboulder, did some 6a-6b tricky slabs, finished off all 6b+ BM on 2024",
+      "details": []
+    },
+    {
+      "date": "2026-01-09T09:47:37.857Z",
+      "workoutId": "0e4adb9e-37ef-4697-a180-0d93927f7db6",
+      "workoutName": "Science fingerboard",
+      "bestValue": 30,
+      "isPR": false,
+      "summary": "2 sets × 30 s",
+      "details": [
+        "Set 1: 30 s",
+        "Set 2: 30 s"
+      ]
+    },
+    {
+      "date": "2026-01-10T13:25:26.628Z",
+      "workoutId": "0e4adb9e-37ef-4697-a180-0d93927f7db6",
+      "workoutName": "Science fingerboard",
+      "bestValue": 30,
+      "isPR": false,
+      "summary": "2 sets × 30 s",
+      "details": [
+        "Set 1: 30 s",
+        "Set 2: 30 s"
+      ]
+    },
+    {
+      "date": "2026-01-10",
+      "workoutId": "48fb9735-f5cb-42c7-a760-9252acffd091",
+      "workoutName": "Maxhangs",
+      "bestValue": 25,
+      "isPR": false,
+      "summary": "6 sets: 5 s  10 mm",
+      "details": [
+        "Set 1: 5 s  10 mm",
+        "Set 2: 5 s  10 mm",
+        "Set 3: 5 s  10 mm",
+        "Set 4: 5 s  10 mm",
+        "Set 5: 5 s  10 mm",
+        "Set 6: 5 s  10 mm"
+      ]
+    },
+    {
+      "date": "2026-01-11",
+      "workoutId": "0e4adb9e-37ef-4697-a180-0d93927f7db6",
+      "workoutName": "Science fingerboard",
+      "bestValue": 30,
+      "isPR": false,
+      "summary": "2 sets × 30 s  20 mm",
+      "details": [
+        "Set 1: 30 s  20 mm",
+        "Set 2: 30 s  20 mm"
+      ]
+    },
+    {
+      "date": "2026-01-11T00:00:00.000Z",
+      "workoutId": null,
+      "workoutName": "Climbing",
+      "bestValue": 0,
+      "isPR": false,
+      "summary": "Climbing",
+      "details": []
+    },
+    {
+      "date": "2026-01-11T00:00:00.000Z",
+      "workoutId": null,
+      "workoutName": "",
+      "bestValue": 0,
+      "isPR": false,
+      "summary": "Session with fuad, barely did any climbs, or so it felt like at least, but it was fun",
+      "details": []
+    },
+    {
+      "date": "2026-01-12",
+      "workoutId": "0e4adb9e-37ef-4697-a180-0d93927f7db6",
+      "workoutName": "Science fingerboard",
+      "bestValue": 30,
+      "isPR": false,
+      "summary": "2 sets × 30 s  20 mm",
+      "details": [
+        "Set 1: 30 s  20 mm",
+        "Set 2: 30 s  20 mm"
+      ]
+    },
+    {
+      "date": "2026-01-13",
+      "workoutId": "0e4adb9e-37ef-4697-a180-0d93927f7db6",
+      "workoutName": "Science fingerboard",
+      "bestValue": 30,
+      "isPR": false,
+      "summary": "2 sets × 30 s  20 mm",
+      "details": [
+        "Set 1: 30 s  20 mm",
+        "Set 2: 30 s  20 mm"
+      ]
+    },
+    {
+      "date": "2026-01-13T00:00:00.000Z",
+      "workoutId": null,
+      "workoutName": "Board climbing",
+      "bestValue": 0,
+      "isPR": false,
+      "summary": "Board climbing — 2 6C both flash\n2 6C+",
+      "details": []
+    },
+    {
+      "date": "2026-01-15",
+      "workoutId": "0e4adb9e-37ef-4697-a180-0d93927f7db6",
+      "workoutName": "Science fingerboard",
+      "bestValue": 30,
+      "isPR": false,
+      "summary": "2 sets × 30 s  20 mm",
+      "details": [
+        "Set 1: 30 s  20 mm",
+        "Set 2: 30 s  20 mm"
+      ]
+    },
+    {
+      "date": "2026-01-15T00:00:00.000Z",
+      "workoutId": null,
+      "workoutName": "Climbing",
+      "bestValue": 0,
+      "isPR": false,
+      "summary": "Climbing",
+      "details": []
+    },
+    {
+      "date": "2026-01-15T00:00:00.000Z",
+      "workoutId": null,
+      "workoutName": "",
+      "bestValue": 0,
+      "isPR": false,
+      "summary": "Session with Jan hendrik at luchthaven, decent gym, a lot of stairs. \nFlashed a 7a classic on 30deg tension board\nTension board is quite fun",
+      "details": []
+    },
+    {
+      "date": "2026-01-16",
+      "workoutId": "0e4adb9e-37ef-4697-a180-0d93927f7db6",
+      "workoutName": "Science fingerboard",
+      "bestValue": 30,
+      "isPR": false,
+      "summary": "2 sets × 30 s  20 mm",
+      "details": [
+        "Set 1: 30 s  20 mm",
+        "Set 2: 30 s  20 mm"
+      ]
+    },
+    {
+      "date": "2026-01-17",
+      "workoutId": "0e4adb9e-37ef-4697-a180-0d93927f7db6",
+      "workoutName": "Science fingerboard",
+      "bestValue": 30,
+      "isPR": false,
+      "summary": "2 sets × 30 s  20 mm",
+      "details": [
+        "Set 1: 30 s  20 mm",
+        "Set 2: 30 s  20 mm"
+      ]
+    },
+    {
+      "date": "2026-01-19",
+      "workoutId": "0e4adb9e-37ef-4697-a180-0d93927f7db6",
+      "workoutName": "Science fingerboard",
+      "bestValue": 30,
+      "isPR": false,
+      "summary": "2 sets × 30 s  20 mm",
+      "details": [
+        "Set 1: 30 s  20 mm",
+        "Set 2: 30 s  20 mm"
+      ]
+    },
+    {
+      "date": "2026-01-18T00:00:00.000Z",
+      "workoutId": null,
+      "workoutName": "",
+      "bestValue": 0,
+      "isPR": false,
+      "summary": "Session at sterk with fuad\nFlashed a bm 7a on the 2024 \n\nDid 6s 10 mm bw 6 sets",
+      "details": []
+    }
+  ],
+  "prs": {
+    "809403ab-6e27-4658-ae39-bf8c7985c277": 36,
+    "48fb9735-f5cb-42c7-a760-9252acffd091": 25
+  },
+  "userWorkouts": [
+    {
+      "id": "8777061b-63ed-4f98-93ca-69014551b5f8",
+      "name": "Science fingerblock hang",
+      "reps": null,
+      "rest": 10,
+      "sets": 2,
+      "tool": "Finger block",
+      "type": "duration",
+      "weight": null,
+      "duration": 2,
+      "hasWeight": false,
+      "weightUnit": null,
+      "repeaterRest": null,
+      "repeaterWork": null,
+      "leftRightMode": true,
+      "repeaterCount": null
+    },
+    {
+      "id": "0e4adb9e-37ef-4697-a180-0d93927f7db6",
+      "name": "Science fingerboard",
+      "reps": null,
+      "rest": 120,
+      "sets": 2,
+      "tool": "Hangboard",
+      "type": "duration",
+      "weight": null,
+      "duration": 30,
+      "hasWeight": false,
+      "weightUnit": null,
+      "repeaterRest": null,
+      "repeaterWork": null,
+      "leftRightMode": false,
+      "repeaterCount": null,
+      "depth": 20
+    },
+    {
+      "id": "809403ab-6e27-4658-ae39-bf8c7985c277",
+      "name": "Pullups",
+      "reps": 5,
+      "rest": 180,
+      "sets": 5,
+      "tool": "Pull-up bar",
+      "type": "reps",
+      "duration": null,
+      "hasWeight": true,
+      "weightUnit": "kg",
+      "repeaterRest": null,
+      "repeaterWork": null,
+      "leftRightMode": false,
+      "repeaterCount": null,
+      "weight": 36
+    },
+    {
+      "id": "48fb9735-f5cb-42c7-a760-9252acffd091",
+      "name": "Maxhangs",
+      "reps": null,
+      "rest": 180,
+      "sets": 6,
+      "tool": "Hangboard",
+      "type": "duration",
+      "weight": 25,
+      "duration": 10,
+      "hasWeight": true,
+      "weightUnit": "kg",
+      "repeaterRest": null,
+      "repeaterWork": null,
+      "leftRightMode": false,
+      "repeaterCount": null,
+      "depth": 10
+    }
+  ],
+  "progressCategories": [
+    {
+      "title": "Pull-ups",
+      "keywords": [
+        "pull"
+      ],
+      "enabled": true
+    },
+    {
+      "title": "20 mm fingerboard",
+      "keywords": [
+        "Maxhangs"
+      ],
+      "enabled": true
+    }
+  ]
+}

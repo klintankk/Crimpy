@@ -1,0 +1,96 @@
+/* css/main.css - simplified: color tokens are provided by JS (js/ui.js)
+   This file only references CSS variables; palette values are set at runtime.
+*/
+
+body {
+  font-family: sans-serif;
+  margin: 0;
+  padding: 0;
+  background: var(--bg, #ffffff);
+  color: var(--text, #0f172a);
+}
+
+:root {
+  /* Minimal fallbacks (will be overridden by js/ui.js at runtime) */
+  --bg: #ffffff;
+  --surface: #ffffff;
+  --card-bg: #ffffff;
+  --text: #0f172a;
+  --muted: #6b7280;
+  --accent: #3b82f6;
+  --btn-bg: #edf2f7;
+  --btn-text: #0f172a;
+  --border: #e5e7eb;
+  --inner: #e6f4ff;
+}
+
+/* Core elements use CSS variables only */
+nav {
+  background: var(--surface);
+  color: var(--text);
+}
+
+nav button {
+  background: var(--btn-bg);
+  color: var(--btn-text);
+  border: 1px solid var(--border);
+}
+
+nav button:hover { background: var(--accent); }
+
+/* Day cards (planner) */
+.day-card {
+  background: var(--card-bg) !important;
+  color: var(--text) !important;
+  border: 1px solid var(--border) !important;
+}
+
+/* Inner day box uses the generic `--inner` token */
+.day-card .min-h-\[40px\] {
+  background: var(--inner) !important;
+}
+
+.day-card button { background: transparent !important; color: var(--text) !important; }
+
+/* Map common utility classes to CSS variables so Tailwind utilities follow runtime palette */
+.bg-white { background-color: var(--card-bg) !important; color: var(--text) !important; }
+.bg-gray-50 { background-color: var(--surface) !important; }
+.bg-gray-100 { background-color: var(--surface) !important; }
+.bg-gray-700, .bg-gray-800 { background-color: var(--btn-bg) !important; }
+.text-white { color: var(--btn-text) !important; }
+.border-gray-200, .border-gray-300, .border-gray-600 { border-color: var(--border) !important; }
+
+/* Button / action colors */
+.bg-blue-600 { background: var(--accent) !important; }
+.hover\:bg-blue-500:hover { background: var(--accent) !important; }
+
+/* Inputs, textareas, modals, toasts */
+input.bg-white, textarea.bg-white, .bg-white { background: var(--card-bg) !important; color: var(--text) !important; }
+
+.toast {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: var(--card-bg);
+  color: var(--text);
+  padding: 16px 24px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  z-index: 9999;
+  animation: slideIn 0.3s, fadeOut 0.5s 2.5s forwards;
+}
+
+@keyframes slideIn { from { transform: translateX(400px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+@keyframes fadeOut { to { opacity: 0; transform: translateX(400px); } }
+
+.confetti { position: fixed; width: 10px; height: 10px; background: var(--accent); top: -10px; animation: fall 3s linear forwards; z-index: 9998; }
+@keyframes fall { to { transform: translateY(100vh) rotate(360deg); opacity: 0; } }
+
+.dragging { opacity: 0.5; }
+
+.drop-zone { min-height: 60px; border: 2px dashed var(--border); border-radius: 8px; padding: 8px; background: var(--surface); }
+
+* { box-sizing: border-box; }
+
+/* Ensure touch targets meet accessibility: all buttons at least 48x48 */
+button { min-height: 48px; min-width: 48px; }

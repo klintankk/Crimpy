@@ -1,5 +1,5 @@
 // sw.js
-const CACHE = 'crimpd-v8';
+const CACHE = 'crimpd-v9';
 const ASSETS = [
   './',
   './index.html',
@@ -8,6 +8,10 @@ const ASSETS = [
   './css/tailwind.css',
   './css/main.css',
   './icons/sprite.svg',
+  './icons/icon-192.png',
+  './icons/icon-512.png',
+  './icons/icon-maskable-512.png',
+  './icons/apple-touch-icon-180.png',
   './js/app.js',
   './js/router.js',
   './js/storage.js',

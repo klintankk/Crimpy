@@ -300,23 +300,14 @@ export class Storage {
       const remote = await fetchRemote();
       const mergedPayload = (merge) ? mergePayloads(remote && remote.parsed, payloadLocal) : payloadLocal;
 
-      // create a timestamped backup copy under backups/
+      // Single canonical file: we overwrite `path` (e.g. data/backup.json) in
+      // place. The merge above already folds in the remote state, and git
+      // history preserves every previous version, so we no longer write a new
+      // timestamped backups/backup-*.json on every sync.
       const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-      const backupPath = `backups/backup-${timestamp}.json`;
-      const backupContent = btoa(unescape(encodeURIComponent(JSON.stringify(remote && remote.parsed ? remote.parsed : payloadLocal, null, 2))));
-      try {
-        // attempt to write backup (no sha required if new)
-        await putFile(backupPath, backupContent, `Backup before merge ${timestamp}`, branch);
-      } catch (e) {
-        // ignore backup failures but log
-        console.warn('saveToGitHub: backup write failed', e && e.message);
-      }
 
-      // finally, write merged payload to target path using latest sha
+      // write merged payload to target path using latest sha
       const mergedContent = btoa(unescape(encodeURIComponent(JSON.stringify(mergedPayload, null, 2))));
-      // fetch latest sha again to be safe
-      const latest = await fetchRemote();
-      const latestSha = latest && latest.sha ? latest.sha : null;
       // Try writing the merged payload, retrying up to 3 times by refetching latest sha each attempt
       const maxAttempts = 3;
       let lastErr = null;

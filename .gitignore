@@ -1,6 +1,6 @@
-# User-data snapshots created by the app's backup/sync feature
+# Legacy per-workout backup snapshots (no longer produced by the sync code).
+# data/backup.json is the single canonical sync target and IS tracked.
 backups/
-data/backup*.json
 
 # Tooling
 node_modules/

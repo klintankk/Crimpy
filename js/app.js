@@ -308,17 +308,62 @@ class App {
         showToast('Auto-save: no GitHub repo configured');
         return;
       }
+      if (!this.storage.get('githubToken')) {
+        showToast('Auto-save: no GitHub token saved (Settings → Backup)');
+        return;
+      }
       try {
         showToast('Auto-saving backup to GitHub...');
         await this.storage.saveAllToGitHub();
         showToast('Auto-save complete');
       } catch (err) {
         console.error('Auto-save failed', err);
-        showToast('Auto-save failed');
+        showToast('Auto-save failed: ' + (err && err.message ? err.message : 'error'));
       }
     } catch (e) { console.error('maybeAutoSyncToGitHub failed', e); }
   }
 
+
+  // Download the full training data as a JSON file (no token/network needed).
+  downloadBackup() {
+    try {
+      this.storage.ensureLogIds();
+      const json = JSON.stringify(this.storage.export(), null, 2);
+      const blob = new Blob([json], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `crimpy-backup-${new Date().toISOString().slice(0, 10)}.json`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      showToast('Backup downloaded');
+    } catch (err) {
+      console.error('downloadBackup failed', err);
+      showToast('Download failed: ' + (err && err.message ? err.message : 'error'));
+    }
+  }
+
+  // Restore training data from a JSON backup file chosen by the user.
+  restoreFromFile(file) {
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const parsed = JSON.parse(reader.result);
+        if (!parsed || typeof parsed !== 'object') throw new Error('not a backup file');
+        this.storage.import(parsed);
+        this.storage.set('syncBase', parsed);
+        showToast('Backup restored');
+        if (typeof this.render === 'function') this.render();
+      } catch (e) {
+        console.error('restoreFromFile failed', e);
+        showToast('Restore failed: invalid backup file');
+      }
+    };
+    reader.onerror = () => showToast('Restore failed: could not read file');
+    reader.readAsText(file);
+  }
 
   // quickSaveToGitHub removed; save/load lives in App Settings modal
 
@@ -340,6 +385,15 @@ class App {
       <div class="mb-3 flex items-center gap-3">
         <label class="text-sm">Auto-sync after workout</label>
         <button id="autoSyncBtn" class="px-3 py-1 rounded bg-gray-200 dark:bg-gray-700">Off</button>
+      </div>
+      <div class="mt-3 p-3 bg-gray-700 rounded">
+        <div class="text-sm font-semibold mb-2">Local backup (no account, always works)</div>
+        <div class="flex flex-wrap gap-2">
+          <button id="dl-backup" class="px-4 py-2 bg-blue-600 text-white rounded">Download backup</button>
+          <button id="restore-backup" class="px-4 py-2 bg-gray-600 text-white rounded">Restore from file</button>
+          <input id="restore-file" type="file" accept="application/json,.json" class="hidden">
+        </div>
+        <div class="text-xs text-gray-400 mt-2">Saves/loads a JSON file on your device (e.g. to Google Drive). Independent of GitHub — works offline and never needs a token.</div>
       </div>
       <div class="flex justify-end gap-3 mt-6">
         <button id="closeOnlySettingsBtn" class="px-4 py-2 bg-gray-600 rounded hover:bg-gray-500">Close</button>
@@ -375,6 +429,18 @@ class App {
     modal.querySelector('#closeOnlySettingsBtn').onclick = saveAndClose;
 
     
+
+    // Local backup (download / restore file) — always available, no network/token
+    try {
+      const dl = modal.querySelector('#dl-backup');
+      if (dl) dl.addEventListener('click', () => this.downloadBackup());
+      const rf = modal.querySelector('#restore-file');
+      const rb = modal.querySelector('#restore-backup');
+      if (rb && rf) {
+        rb.addEventListener('click', () => rf.click());
+        rf.addEventListener('change', () => { if (rf.files && rf.files[0]) this.restoreFromFile(rf.files[0]); });
+      }
+    } catch (e) { /* ignore */ }
 
     // initialize auto-sync toggle button state
     try {
@@ -422,8 +488,8 @@ class App {
           <input id="gh-repo" class="p-2 bg-gray-600 rounded text-gray-100" placeholder="owner/repo" value="${savedRepo}">
           <input id="gh-path" class="p-2 bg-gray-600 rounded text-gray-100" placeholder="path (e.g. data/backup.json)" value="${savedPath}">
           <input id="gh-branch" class="p-2 bg-gray-600 rounded text-gray-100" placeholder="branch" value="${savedBranch}">
-          <input id="gh-token" class="p-2 bg-gray-600 rounded text-gray-100" placeholder="Personal access token (optional for public repo)" value="${savedToken}">
-          <label class="flex items-center gap-2 text-sm"><input id="gh-remember" type="checkbox" ${savedToken ? 'checked' : ''}> Remember token in browser (localStorage)</label>
+          <input id="gh-token" class="p-2 bg-gray-600 rounded text-gray-100" placeholder="Personal access token (required to write)" value="${savedToken}">
+          <label class="flex items-center gap-2 text-sm"><input id="gh-remember" type="checkbox" checked> Remember token in browser (needed for auto-save)</label>
           <input id="gh-message" class="p-2 bg-gray-600 rounded text-gray-100" placeholder="Commit message" value="${savedMessage}">
           <label class="flex items-center gap-2 text-sm"><input id="gh-autoload" type="checkbox" ${savedAutoLoad ? 'checked' : ''}> Auto-load backup on startup</label>
           <label class="flex items-center gap-2 text-sm"><input id="gh-force" type="checkbox"> Force overwrite (bypass SHA check)</label>

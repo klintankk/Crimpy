@@ -1,8 +1,6 @@
 // js/charts.js
 import { defaultKeywords } from './chartsConfig.js';
 
-export { defaultKeywords };
-
 export function renderCharts(log, storage) {
   setTimeout(() => {
     renderVolumeChart(log, storage);

@@ -170,11 +170,6 @@ input.bg-white, textarea.bg-white, .bg-white { background: var(--card-bg) !impor
 
 .drop-zone { min-height: 60px; border: 2px dashed var(--border); border-radius: 8px; padding: 8px; background: var(--surface); }
 
-* { box-sizing: border-box; }
-
-/* Ensure touch targets meet accessibility: all buttons at least 48x48 and center contents */
-button { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; min-width: 48px; }
-
 .dark .text-gray-700 { color: var(--muted) !important; }
 .dark .shadow { box-shadow: none !important; }
 .dark .bg-white { background-color: var(--card-bg) !important; }

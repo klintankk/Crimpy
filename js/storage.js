@@ -174,50 +174,6 @@ export class Storage {
     try { window.dispatchEvent(new CustomEvent('storage:allUpdated', { detail: { source: 'import' } })); } catch (e) { /* ignore */ }
   }
 
-  // Supabase cloud helpers removed — provide no-op stubs to avoid runtime errors
-  async syncWorkoutsToCloud() {
-    console.warn('syncWorkoutsToCloud: Supabase integration removed — no-op');
-    return false;
-  }
-
-  async fetchWorkoutsFromCloud() {
-    console.warn('fetchWorkoutsFromCloud: Supabase integration removed — no-op');
-    return null;
-  }
-
-  // Plan sync
-  async syncPlanToCloud() {
-    console.warn('syncPlanToCloud: Supabase integration removed — no-op');
-    return false;
-  }
-
-  async fetchPlanFromCloud() {
-    console.warn('fetchPlanFromCloud: Supabase integration removed — no-op');
-    return null;
-  }
-
-  // Logs sync
-  async syncLogsToCloud() {
-    console.warn('syncLogsToCloud: Supabase integration removed — no-op');
-    return false;
-  }
-
-  async fetchLogsFromCloud() {
-    console.warn('fetchLogsFromCloud: Supabase integration removed — no-op');
-    return null;
-  }
-
-  // Orchestrators
-  async syncAllToCloud() {
-    console.warn('syncAllToCloud: Supabase integration removed — no-op');
-    return { workouts: false, plan: false, logs: false };
-  }
-
-  async fetchAllFromCloud() {
-    console.warn('fetchAllFromCloud: Supabase integration removed — no-op');
-    return { workouts: null, plan: null, logs: null };
-  }
-
   // Save exported data to a file in a GitHub repository using the Contents API.
   // options: { owner, repo, path, branch, token, message }
   async saveToGitHub(options) {

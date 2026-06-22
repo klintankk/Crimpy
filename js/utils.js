@@ -17,8 +17,6 @@ function beep(freq = 800, duration = 120, vol = 0.15) {
 
 export function playSound() { beep(); }
 
-export function isMuted() { return muted; }
-
 export function muteToggle() {
   muted = !muted;
   localStorage.setItem(CACHE_KEY, muted);

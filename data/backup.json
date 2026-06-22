@@ -223,6 +223,19 @@
   ],
   "log": [
     {
+      "id": "7d685be1-f923-4e99-bda4-e05b148affae",
+      "date": "2026-06-25",
+      "workoutId": "0e4adb9e-37ef-4697-a180-0d93927f7db6",
+      "workoutName": "Science fingerboard",
+      "bestValue": 30,
+      "isPR": false,
+      "summary": "2 sets × 30 s  20 mm",
+      "details": [
+        "Set 1: 30 s  20 mm",
+        "Set 2: 30 s  20 mm"
+      ]
+    },
+    {
       "id": "fae9847d-bd87-40d8-af8d-6c13c1a4782b",
       "date": "2026-06-25",
       "workoutId": "0e4adb9e-37ef-4697-a180-0d93927f7db6",

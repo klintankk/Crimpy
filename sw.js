@@ -1,5 +1,5 @@
 // sw.js
-const CACHE = 'crimpd-v10';
+const CACHE = 'crimpd-v11';
 const ASSETS = [
   './',
   './index.html',

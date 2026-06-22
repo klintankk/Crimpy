@@ -551,8 +551,8 @@ class App {
           const parts = repoVal.split('/');
           const owner = parts[0];
           const repo = parts.slice(1).join('/');
-          const apiBase = `https://api.github.com/repos/${owner}/${repo}/contents/${encodeURIComponent(pathVal)}?ref=${encodeURIComponent(branchVal)}`;
-          const res = await fetch(apiBase, { headers: tokenVal ? { Authorization: `token ${tokenVal}`, Accept: 'application/vnd.github.v3+json' } : { Accept: 'application/vnd.github.v3+json' } });
+          const apiBase = `https://api.github.com/repos/${owner}/${repo}/contents/${encodeURIComponent(pathVal)}?ref=${encodeURIComponent(branchVal)}&_=${Date.now()}`;
+          const res = await fetch(apiBase, { cache: 'no-store', headers: tokenVal ? { Authorization: `token ${tokenVal}`, Accept: 'application/vnd.github.v3+json' } : { Accept: 'application/vnd.github.v3+json' } });
           if (!res.ok) { ghRemoteShaEl.textContent = '(not found)'; return; }
           const j = await res.json(); ghRemoteShaEl.textContent = (j && j.sha) ? j.sha : '(no sha)';
         } catch (e) { ghRemoteShaEl.textContent = '(error)'; }

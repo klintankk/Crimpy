@@ -206,10 +206,12 @@ export class Storage {
       const headers = { Accept: 'application/vnd.github.v3+json' };
       if (token) headers.Authorization = `token ${token}`;
 
-      // helper: fetch remote file JSON (if exists)
+      // helper: fetch remote file JSON (if exists). Bypass the HTTP cache and
+      // add a cache-buster so retries always read the *current* sha — a stale
+      // cached sha is what causes GitHub's "does not match" conflict on save.
       const fetchRemote = async () => {
         try {
-          const res = await fetch(apiBase + `?ref=${encodeURIComponent(branch)}`, { headers });
+          const res = await fetch(apiBase + `?ref=${encodeURIComponent(branch)}&_=${Date.now()}`, { headers, cache: 'no-store' });
           if (!res.ok) return null;
           const j = await res.json();
           if (!j || !j.content) return null;
@@ -281,8 +283,9 @@ export class Storage {
     try {
       const { owner, repo, path, branch = 'main', token } = options || {};
       if (!owner || !repo || !path) throw new Error('owner, repo and path are required');
-      const apiBase = `https://api.github.com/repos/${owner}/${repo}/contents/${encodeURIComponent(path)}?ref=${encodeURIComponent(branch)}`;
+      const apiBase = `https://api.github.com/repos/${owner}/${repo}/contents/${encodeURIComponent(path)}?ref=${encodeURIComponent(branch)}&_=${Date.now()}`;
       const res = await fetch(apiBase, {
+        cache: 'no-store',
         headers: token ? { Authorization: `token ${token}`, Accept: 'application/vnd.github.v3+json' } : { Accept: 'application/vnd.github.v3+json' }
       });
       if (!res.ok) {

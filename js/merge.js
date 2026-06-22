@@ -1,19 +1,15 @@
-'use strict';
-
-/*
- * 3-way merge for Crimpy training data.
- *
- * The client sends two snapshots: `base` (the canonical document it last
- * agreed with the server) and `local` (its current state). The server reads
- * `remote` (the current canonical document). A 3-way merge against the common
- * `base` lets us tell additions, edits and *deletions* apart — so a record the
- * user deleted on one device does not silently reappear from another, which a
- * plain union merge could not do.
- *
- * Pure module: no I/O, no git. Exported for unit testing.
- */
-
-const crypto = require('crypto');
+// js/merge.js
+//
+// Deletion-aware 3-way merge for Crimpy training data, used by the in-browser
+// GitHub sync. The client sends nothing to a server now; it fetches the remote
+// canonical document, merges it against the last-agreed `base` and the current
+// `local` state, and writes the result back.
+//
+// A 3-way merge against the common `base` lets us tell additions, edits and
+// *deletions* apart — so a record deleted on one device does not reappear from
+// another, which a plain union merge cannot do.
+//
+// Isomorphic ES module: no Node/browser-specific APIs (pure-JS hash for keys).
 
 // Stable, key-sorted JSON so deep-equality is order-independent for objects.
 function canon(v) {
@@ -25,13 +21,19 @@ function canon(v) {
 function eq(a, b) { return canon(a) === canon(b); }
 const has = (o, k) => Object.prototype.hasOwnProperty.call(o, k);
 
+// FNV-1a 32-bit hash — a stable content key, not cryptographic.
+function hashStr(s) {
+  let h = 0x811c9dc5;
+  for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193); }
+  return (h >>> 0).toString(16).padStart(8, '0');
+}
+
 /*
- * 3-way merge of a plain map (key -> value); values are compared atomically.
- * Rules per key:
- *   - changed on one side only        -> that side's value
+ * 3-way merge of a plain map (key -> value); values compared atomically.
+ *   - changed on one side only                    -> that side's value
  *   - deleted on one side, untouched on the other -> dropped
  *   - deleted on one side, edited on the other    -> the edit wins
- *   - changed on both (conflict)       -> local wins (last-writer-wins)
+ *   - changed on both (conflict)                  -> local wins (last-writer-wins)
  */
 function merge3Map(base, local, remote) {
   base = base || {}; local = local || {}; remote = remote || {};
@@ -64,20 +66,16 @@ function merge3Map(base, local, remote) {
 function merge3List(base, local, remote, keyFn) {
   const toMap = (arr) => {
     const m = {};
-    (Array.isArray(arr) ? arr : []).forEach(item => {
-      if (item == null) return;
-      m[keyFn(item)] = item;
-    });
+    (Array.isArray(arr) ? arr : []).forEach(item => { if (item != null) m[keyFn(item)] = item; });
     return m;
   };
   return Object.values(merge3Map(toMap(base), toMap(local), toMap(remote)));
 }
 
-// Stable key for a log entry: its id, else a deterministic content hash so the
-// same legacy entry hashes identically on every side of the merge.
+// Stable key for a log entry: its id, else a deterministic content hash.
 function logKey(e) {
   if (e && e.id) return String(e.id);
-  return 'h:' + crypto.createHash('sha1').update(canon(e)).digest('hex').slice(0, 16);
+  return 'h:' + hashStr(canon(e));
 }
 
 // Atomic 3-way pick for small whole-value fields (e.g. progressCategories).
@@ -91,8 +89,8 @@ function pickAtomic(b, l, r, dflt) {
   return L; // identical or conflict -> local
 }
 
-// Merge a whole Crimpy document.
-function mergeDoc(base, local, remote) {
+// Merge a whole Crimpy document (base/local/remote -> merged).
+export function mergeDoc(base, local, remote) {
   base = base || {}; local = local || {}; remote = remote || {};
   const out = {
     plan:          merge3Map(base.plan, local.plan, remote.plan),
@@ -111,4 +109,4 @@ function mergeDoc(base, local, remote) {
   return out;
 }
 
-module.exports = { mergeDoc, merge3Map, merge3List, logKey, canon, eq };
+export { merge3Map, merge3List, logKey, canon, eq };

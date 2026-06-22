@@ -262,18 +262,6 @@ class App {
   // then fall back to GitHub auto-load if configured.
   async maybeAutoLoadBackup() {
     try {
-      // Prefer the Pi sync server when configured.
-      if (this.storage.get('syncServerUrl')) {
-        try {
-          await this.storage.loadFromServer();
-          console.debug('Loaded backup from Pi sync server');
-          if (typeof this.render === 'function') this.render();
-          return;
-        } catch (err) {
-          console.warn('Pi sync load failed, falling back', err);
-        }
-      }
-
       const configuredPath = (this.storage.get('githubPath') || 'data/backup.json').replace(/^\/+/, '');
       const localPath = '/' + configuredPath;
       try {
@@ -315,21 +303,6 @@ class App {
       const enabled = !!this.storage.get('autoSyncAfterWorkout');
       if (!enabled) return;
 
-      // Prefer the Raspberry Pi sync server when configured: it owns the
-      // GitHub credentials and performs the deletion-aware 3-way merge.
-      if (this.storage.get('syncServerUrl')) {
-        try {
-          showToast('Syncing to Pi...');
-          await this.storage.syncWithServer();
-          showToast('Sync complete');
-          if (typeof this.render === 'function') this.render();
-        } catch (err) {
-          console.error('Pi sync failed', err);
-          showToast('Sync failed: ' + (err && err.message ? err.message : 'error'));
-        }
-        return;
-      }
-
       const repoVal = this.storage.get('githubRepo');
       if (!repoVal) {
         showToast('Auto-save: no GitHub repo configured');
@@ -368,18 +341,6 @@ class App {
         <label class="text-sm">Auto-sync after workout</label>
         <button id="autoSyncBtn" class="px-3 py-1 rounded bg-gray-200 dark:bg-gray-700">Off</button>
       </div>
-      <div class="mt-3 p-3 bg-gray-700 rounded">
-        <div class="text-sm font-semibold mb-2">Sync server (Raspberry Pi)</div>
-        <div class="grid grid-cols-1 gap-2">
-          <input id="sync-url" class="p-2 bg-gray-600 rounded text-gray-100" placeholder="https://pi-name.your-tailnet.ts.net" value="${(this.storage.get('syncServerUrl') || '')}">
-          <input id="sync-token" class="p-2 bg-gray-600 rounded text-gray-100" placeholder="Shared secret (optional, only if server sets SYNC_TOKEN)" value="${(this.storage.get('syncToken') || '')}">
-          <div class="flex gap-2">
-            <button id="sync-now" class="px-4 py-2 bg-green-600 text-white rounded">Sync now</button>
-            <button id="sync-load" class="px-4 py-2 bg-yellow-600 text-white rounded">Load from server</button>
-          </div>
-          <div class="text-xs text-gray-400">When set, this takes priority over the GitHub backup below. The Pi holds the GitHub token and merges changes (including deletions) across devices.</div>
-        </div>
-      </div>
       <div class="flex justify-end gap-3 mt-6">
         <button id="closeOnlySettingsBtn" class="px-4 py-2 bg-gray-600 rounded hover:bg-gray-500">Close</button>
       </div>
@@ -388,18 +349,6 @@ class App {
     // Save form fields (GitHub token and last-used repo info) and close
     const saveAndClose = () => {
       try {
-        // Persist Pi sync-server settings
-        const syncUrlEl = modal.querySelector('#sync-url');
-        if (syncUrlEl) {
-          const u = (syncUrlEl.value || '').trim();
-          if (u) this.storage.set('syncServerUrl', u); else this.storage.clear('syncServerUrl');
-        }
-        const syncTokenEl = modal.querySelector('#sync-token');
-        if (syncTokenEl) {
-          const t = (syncTokenEl.value || '').trim();
-          if (t) this.storage.set('syncToken', t); else this.storage.clear('syncToken');
-        }
-
         // Persist GitHub form fields if present
         const ghTokenEl = modal.querySelector('#gh-token');
         if (ghTokenEl) {
@@ -451,38 +400,6 @@ class App {
       }
     } catch (e) { /* ignore */ }
 
-    // Pi sync-server buttons
-    try {
-      const syncNow = modal.querySelector('#sync-now');
-      if (syncNow) syncNow.addEventListener('click', async () => {
-        const u = (modal.querySelector('#sync-url').value || '').trim();
-        const t = (modal.querySelector('#sync-token').value || '').trim();
-        if (u) this.storage.set('syncServerUrl', u); else { showToast('Enter a server URL'); return; }
-        if (t) this.storage.set('syncToken', t); else this.storage.clear('syncToken');
-        try {
-          showToast('Syncing to Pi...');
-          await this.storage.syncWithServer();
-          showToast('Sync complete');
-          if (typeof this.render === 'function') this.render();
-        } catch (err) { showToast('Sync failed: ' + (err && err.message ? err.message : 'error')); }
-      });
-      const syncLoad = modal.querySelector('#sync-load');
-      if (syncLoad) syncLoad.addEventListener('click', async () => {
-        const u = (modal.querySelector('#sync-url').value || '').trim();
-        const t = (modal.querySelector('#sync-token').value || '').trim();
-        if (u) this.storage.set('syncServerUrl', u); else { showToast('Enter a server URL'); return; }
-        if (t) this.storage.set('syncToken', t); else this.storage.clear('syncToken');
-        try {
-          showToast('Loading from server...');
-          await this.storage.loadFromServer();
-          showToast('Loaded');
-          if (typeof this.render === 'function') this.render();
-        } catch (err) { showToast('Load failed: ' + (err && err.message ? err.message : 'error')); }
-      });
-    } catch (e) { /* ignore */ }
-
-
-
     // sample data load and import/export buttons removed
 
     // Cloud sync buttons removed — use GitHub backup form instead
@@ -494,10 +411,10 @@ class App {
       const ghForm = document.createElement('div');
       ghForm.className = 'mt-3 p-3 bg-gray-700 rounded';
       const savedToken = this.storage.get('githubToken') || '';
-      const savedRepo = this.storage.get('githubRepo') || 'eriknilsson133x-dev/.github.io';
+      const savedRepo = this.storage.get('githubRepo') || 'klintankk/Crimpy';
       const savedPath = this.storage.get('githubPath') || 'data/backup.json';
       const savedBranch = this.storage.get('githubBranch') || 'main';
-      const savedMessage = this.storage.get('githubMessage') || 'crimpd backup from web';
+      const savedMessage = this.storage.get('githubMessage') || 'crimpy backup from app';
       const savedAutoLoad = !!this.storage.get('githubAutoLoad');
       ghForm.innerHTML = `
         <div class="text-sm font-semibold mb-2">Backup to GitHub</div>

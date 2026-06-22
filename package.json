@@ -5,7 +5,8 @@
   "private": true,
   "scripts": {
     "build:css": "tailwindcss -c tailwind.config.js -i css/tailwind.input.css -o css/tailwind.css --minify",
-    "watch:css": "tailwindcss -c tailwind.config.js -i css/tailwind.input.css -o css/tailwind.css --watch"
+    "watch:css": "tailwindcss -c tailwind.config.js -i css/tailwind.input.css -o css/tailwind.css --watch",
+    "test": "node test/merge.test.mjs"
   },
   "devDependencies": {
     "tailwindcss": "^3.4.0"

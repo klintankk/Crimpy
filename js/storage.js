@@ -1,4 +1,6 @@
 // js/storage.js
+import { mergeDoc } from './merge.js';
+
 export class Storage {
   constructor() {
     this.defaults = {
@@ -189,43 +191,6 @@ export class Storage {
     return changed;
   }
 
-  // --- Raspberry Pi sync server (single source of truth) ---------------------
-  // The Pi holds the GitHub credentials and performs the deletion-aware merge.
-  // We send `base` (last agreed canonical doc) plus our current `data` so the
-  // server can do a true 3-way merge.
-
-  async syncWithServer() {
-    const url = (this.get('syncServerUrl') || '').replace(/\/+$/, '');
-    if (!url) throw new Error('No sync server configured');
-    this.ensureLogIds();
-    const token = this.get('syncToken') || '';
-    const res = await fetch(url + '/sync', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', ...(token ? { 'X-Sync-Token': token } : {}) },
-      body: JSON.stringify({ base: this.get('syncBase') || null, data: this.export() })
-    });
-    if (!res.ok) {
-      const j = await res.json().catch(() => ({}));
-      throw new Error(j && j.error ? j.error : `Sync failed (${res.status})`);
-    }
-    const merged = await res.json();
-    this.import(merged);
-    this.set('syncBase', merged);
-    return merged;
-  }
-
-  async loadFromServer() {
-    const url = (this.get('syncServerUrl') || '').replace(/\/+$/, '');
-    if (!url) throw new Error('No sync server configured');
-    const token = this.get('syncToken') || '';
-    const res = await fetch(url + '/data', { headers: token ? { 'X-Sync-Token': token } : {} });
-    if (!res.ok) throw new Error(`Load failed (${res.status})`);
-    const data = await res.json();
-    this.import(data);
-    this.set('syncBase', data);
-    return data;
-  }
-
   // Save exported data to a file in a GitHub repository using the Contents API.
   // options: { owner, repo, path, branch, token, message }
   async saveToGitHub(options) {
@@ -235,8 +200,8 @@ export class Storage {
 
       const encodedPath = path.split('/').map(encodeURIComponent).join('/');
       const apiBase = `https://api.github.com/repos/${owner}/${repo}/contents/${encodedPath}`;
+      this.ensureLogIds();
       const payloadLocal = this.export();
-      const contentLocal = btoa(unescape(encodeURIComponent(JSON.stringify(payloadLocal, null, 2))));
 
       const headers = { Accept: 'application/vnd.github.v3+json' };
       if (token) headers.Authorization = `token ${token}`;
@@ -267,46 +232,13 @@ export class Storage {
         return pj;
       };
 
-      // Merge remote and local payloads
-      const mergePayloads = (remote, local) => {
-        if (!remote) return local;
-        const out = {};
-        // merge objects: plan, planRecurring, planCompleted, planNotes, prs
-        out.plan = Object.assign({}, remote.plan || {}, local.plan || {});
-        out.planRecurring = Object.assign({}, remote.planRecurring || {}, local.planRecurring || {});
-        out.planCompleted = Object.assign({}, remote.planCompleted || {}, local.planCompleted || {});
-        out.planNotes = Object.assign({}, remote.planNotes || {}, local.planNotes || {});
-        out.prs = Object.assign({}, remote.prs || {}, local.prs || {});
-        out.progressCategories = local.progressCategories || remote.progressCategories || [];
-
-        // activities: union of names
-        const aRem = Array.isArray(remote.activities) ? remote.activities : [];
-        const aLoc = Array.isArray(local.activities) ? local.activities : [];
-        out.activities = Array.from(new Set(aRem.concat(aLoc)));
-
-        // userWorkouts: merge by id, prefer local
-        const uwRem = Array.isArray(remote.userWorkouts) ? remote.userWorkouts : [];
-        const uwLoc = Array.isArray(local.userWorkouts) ? local.userWorkouts : [];
-        const uwMap = new Map();
-        uwRem.forEach(u => { if (u && u.id) uwMap.set(u.id, u); });
-        uwLoc.forEach(u => { if (u && u.id) uwMap.set(u.id, u); });
-        out.userWorkouts = Array.from(uwMap.values());
-
-        // log: merge and dedupe by id or date+summary
-        const logRem = Array.isArray(remote.log) ? remote.log : [];
-        const logLoc = Array.isArray(local.log) ? local.log : [];
-        const logMap = new Map();
-        const keyFor = (e) => (e && e.id) ? `id:${e.id}` : `ds:${(e && e.date)||''}|${(e && e.summary)||JSON.stringify(e)}`;
-        logRem.forEach(e => { try { logMap.set(keyFor(e), e); } catch (e) {} });
-        logLoc.forEach(e => { try { logMap.set(keyFor(e), e); } catch (e) {} });
-        out.log = Array.from(logMap.values()).sort((a,b) => (a.date||'') < (b.date||'') ? 1 : -1);
-
-        return out;
-      };
-
-      // perform merge if requested
+      // Deletion-aware 3-way merge: reconcile the remote canonical doc with our
+      // local state against the last-agreed `base` (syncBase), so deletions made
+      // on this device don't reappear from the remote copy.
       const remote = await fetchRemote();
-      const mergedPayload = (merge) ? mergePayloads(remote && remote.parsed, payloadLocal) : payloadLocal;
+      const mergedPayload = (merge)
+        ? mergeDoc(this.get('syncBase') || null, payloadLocal, remote && remote.parsed)
+        : payloadLocal;
 
       // Single canonical file: we overwrite `path` (e.g. data/backup.json) in
       // place. The merge above already folds in the remote state, and git
@@ -324,6 +256,10 @@ export class Storage {
         const trySha = latestTry && latestTry.sha ? latestTry.sha : null;
         try {
           const res = await putFile(path, mergedContent, message || `Backup: merged ${timestamp}`, branch, trySha);
+          // The merged doc is now canonical: adopt it locally and remember it as
+          // the base for the next 3-way merge.
+          if (merge) this.import(mergedPayload);
+          this.set('syncBase', mergedPayload);
           return res;
         } catch (err) {
           lastErr = err;
@@ -360,8 +296,9 @@ export class Storage {
       content = content.replace(/\n/g, '');
       const decoded = decodeURIComponent(escape(atob(content)));
       const parsed = JSON.parse(decoded);
-      // Import into storage
+      // Import into storage and adopt it as the merge base.
       this.import(parsed);
+      this.set('syncBase', parsed);
       // Notify UI
       try { window.dispatchEvent(new CustomEvent('storage:allUpdated', { detail: { source: 'github' } })); } catch (e) { /* ignore */ }
       return parsed;

@@ -174,6 +174,58 @@ export class Storage {
     try { window.dispatchEvent(new CustomEvent('storage:allUpdated', { detail: { source: 'import' } })); } catch (e) { /* ignore */ }
   }
 
+  // Backfill stable ids on log entries so the 3-way sync merge can track edits
+  // and deletions per entry instead of by fragile content matching.
+  ensureLogIds() {
+    const log = this.get('log') || [];
+    let changed = false;
+    log.forEach(e => {
+      if (e && !e.id) {
+        e.id = 'log-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 8);
+        changed = true;
+      }
+    });
+    if (changed) this.set('log', log);
+    return changed;
+  }
+
+  // --- Raspberry Pi sync server (single source of truth) ---------------------
+  // The Pi holds the GitHub credentials and performs the deletion-aware merge.
+  // We send `base` (last agreed canonical doc) plus our current `data` so the
+  // server can do a true 3-way merge.
+
+  async syncWithServer() {
+    const url = (this.get('syncServerUrl') || '').replace(/\/+$/, '');
+    if (!url) throw new Error('No sync server configured');
+    this.ensureLogIds();
+    const token = this.get('syncToken') || '';
+    const res = await fetch(url + '/sync', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', ...(token ? { 'X-Sync-Token': token } : {}) },
+      body: JSON.stringify({ base: this.get('syncBase') || null, data: this.export() })
+    });
+    if (!res.ok) {
+      const j = await res.json().catch(() => ({}));
+      throw new Error(j && j.error ? j.error : `Sync failed (${res.status})`);
+    }
+    const merged = await res.json();
+    this.import(merged);
+    this.set('syncBase', merged);
+    return merged;
+  }
+
+  async loadFromServer() {
+    const url = (this.get('syncServerUrl') || '').replace(/\/+$/, '');
+    if (!url) throw new Error('No sync server configured');
+    const token = this.get('syncToken') || '';
+    const res = await fetch(url + '/data', { headers: token ? { 'X-Sync-Token': token } : {} });
+    if (!res.ok) throw new Error(`Load failed (${res.status})`);
+    const data = await res.json();
+    this.import(data);
+    this.set('syncBase', data);
+    return data;
+  }
+
   // Save exported data to a file in a GitHub repository using the Contents API.
   // options: { owner, repo, path, branch, token, message }
   async saveToGitHub(options) {

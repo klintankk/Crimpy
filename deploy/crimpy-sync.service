@@ -1,0 +1,21 @@
+[Unit]
+Description=Crimpy sync server (training-data merge + GitHub push)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+# Adjust User and paths to match your Pi.
+User=pi
+WorkingDirectory=/home/pi/Crimpy/server
+EnvironmentFile=/home/pi/Crimpy/server/.env
+ExecStart=/usr/bin/node /home/pi/Crimpy/server/sync-server.js
+Restart=on-failure
+RestartSec=3
+# Light hardening.
+NoNewPrivileges=true
+ProtectSystem=full
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

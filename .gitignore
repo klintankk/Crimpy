@@ -2,6 +2,9 @@
 # data/backup.json is the single canonical sync target and IS tracked.
 backups/
 
+# Sync server secrets/config
+server/.env
+
 # Tooling
 node_modules/
 .DS_Store

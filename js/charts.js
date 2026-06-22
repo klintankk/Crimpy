@@ -3,6 +3,12 @@ import { defaultKeywords } from './chartsConfig.js';
 
 export function renderCharts(log, storage) {
   setTimeout(() => {
+    // Chart.js loads from a CDN; if it failed (offline first-run, CDN outage)
+    // skip rendering instead of throwing "Chart is not defined".
+    if (typeof Chart === 'undefined') {
+      console.warn('renderCharts: Chart.js not loaded — skipping charts');
+      return;
+    }
     renderVolumeChart(log, storage);
     renderProgressChart(log, storage);
   }, 100);

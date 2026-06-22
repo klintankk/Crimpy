@@ -647,23 +647,6 @@ class App {
     else if (typeof this.render === 'function') this.render();
   }
 
-  toggleActivityCompletedForCalendar(date, id) {
-    this.calendar.completed[date] = this.calendar.completed[date] || [];
-    const idx = this.calendar.completed[date].indexOf(id);
-    if (idx === -1) this.calendar.completed[date].push(id);
-    else this.calendar.completed[date].splice(idx, 1);
-    this.storage.set('planCompleted', this.calendar.completed);
-    if (typeof this.render === 'function') this.render();
-  }
-
-  removeFromDayForCalendar(date, id) {
-    this.calendar.plan[date] = (this.calendar.plan[date] || []).filter(i => i !== id);
-    if (this.calendar.plan[date].length === 0) delete this.calendar.plan[date];
-    this.storage.set('plan', this.calendar.plan);
-    if (typeof this.renderPlanEditor === 'function') this.renderPlanEditor();
-    else if (typeof this.render === 'function') this.render();
-  }
-
   prevWeekForCalendar() {
     this.calendar.prevWeek();
   }
@@ -1004,8 +987,14 @@ class App {
 
         // countdown finished: start work
         if (ts.phase === 'countdown') {
-          ts.phase = 'work';
-          ts.timeLeft = ts.workout.duration || 1;
+          if (ts.workout.tool === 'Finger block' && ts.workout.leftRightMode) {
+            // first set must also run the left/switch/right sequence
+            ts.phase = 'work-left';
+            ts.timeLeft = ts.workout.duration || 30;
+          } else {
+            ts.phase = 'work';
+            ts.timeLeft = ts.workout.duration || 1;
+          }
           this.startTimer();
           return;
         }

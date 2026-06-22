@@ -993,8 +993,9 @@ class App {
     const ts = this.state.timerState;
     if (ts.timer) clearInterval(ts.timer);
 
-    // BEEP whenever a work phase starts
-    if (ts.phase === 'work' || ts.phase === 'repeaters-work' || ts.phase === 'work-left' || ts.phase === 'work-right') playSound();
+    // BEEP whenever a work phase actually starts (timeLeft>0). Skipping sets
+    // timeLeft to 0 to advance immediately, so this won't beep on a skip.
+    if (ts.timeLeft > 0 && (ts.phase === 'work' || ts.phase === 'repeaters-work' || ts.phase === 'work-left' || ts.phase === 'work-right')) playSound();
 
     ts.timer = setInterval(() => {
       ts.timeLeft -= 0.1;
@@ -1236,9 +1237,13 @@ class App {
   }
 
   skipTimer() {
-    clearInterval(this.state.timerState.timer);
-    this.state.timerState.phase = 'work';
-    this.state.timerState.timeLeft = 0;
+    const ts = this.state.timerState;
+    if (!ts) return;
+    if (ts.timer) clearInterval(ts.timer);
+    // Skip the CURRENT phase by letting it elapse, then reuse the timer's own
+    // transition logic. (Previously it forced phase='work', which reset the
+    // rest countdown and recorded a phantom set when skipping during rest.)
+    ts.timeLeft = 0;
     this.startTimer();
   }
 

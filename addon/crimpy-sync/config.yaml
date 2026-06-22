@@ -1,0 +1,34 @@
+name: "Crimpy Sync"
+version: "1.0.0"
+slug: "crimpy_sync"
+description: "Deletion-aware 3-way merge of Crimpy training data, pushed to GitHub. The Pi becomes the single source of truth."
+url: "https://github.com/klintankk/Crimpy"
+arch:
+  - aarch64
+  - amd64
+  - armv7
+  - armhf
+  - i386
+startup: services
+boot: auto
+init: false
+ports:
+  "8787/tcp": 8787
+ports_description:
+  "8787/tcp": "Crimpy sync API + app (point the app here, or front it with `tailscale serve`)"
+options:
+  repo: "klintankk/Crimpy"
+  branch: "main"
+  github_token: ""
+  sync_token: ""
+  push: true
+  serve_static: true
+  allowed_origin: "*"
+schema:
+  repo: "str"
+  branch: "str"
+  github_token: "password"
+  sync_token: "password?"
+  push: "bool"
+  serve_static: "bool"
+  allowed_origin: "str?"

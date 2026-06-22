@@ -33,7 +33,8 @@ Training data lives in the browser's `localStorage`. Backups/sync can go to:
 2. **A Raspberry Pi sync server** (recommended for multi-device use): the Pi
    holds the GitHub credentials and performs a deletion-aware 3-way merge so
    changes from several devices reconcile without deleted items reappearing.
-   See [`server/README.md`](server/README.md).
+   See [`server/README.md`](server/README.md). On Home Assistant OS, run it as
+   the persistent add-on in [`addon/crimpy-sync/`](addon/crimpy-sync/DOCS.md).
 
 ## Layout
 

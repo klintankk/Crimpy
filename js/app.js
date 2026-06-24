@@ -8,6 +8,9 @@ import { Logger } from './logger.js';
 import { showToast, showConfetti, playSound, renderSpeakerButton } from './utils.js';
 import { initThemeFromStorage, toggleTheme as toggleThemeHelper, loadSvgSprite } from './ui.js';
 import { renderRepsUI } from './repsSetUI.js';
+import { scheduleWorkoutNotifications } from './notifications.js';
+
+function clampNotifyHour(v) { const h = parseInt(v, 10); return Number.isFinite(h) && h >= 0 && h <= 23 ? h : 8; }
 
 class App {
   constructor() {
@@ -52,11 +55,20 @@ class App {
     window.addEventListener('storage:allUpdated', () => {
       try { if (typeof this.render === 'function') this.render(); } catch (e) {}
       try { if (typeof this.renderPlanEditor === 'function') this.renderPlanEditor(); } catch (e) {}
+      this.rescheduleNotifications();
     });
 
     window.app = this;
     // attempt auto-load of GitHub backup if user enabled it in previous session
     try { this.maybeAutoLoadBackup(); } catch (e) { /* ignore */ }
+    // schedule "workout due" local notifications (native app only; no-op on web)
+    this.rescheduleNotifications();
+    // re-evaluate the schedule whenever the app is reopened/refocused
+    try {
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') this.rescheduleNotifications();
+      });
+    } catch (e) { /* ignore */ }
     // bind session renderer to instance to ensure method exists on the object
     if (typeof this.renderWorkoutSession === 'function') {
       this.renderWorkoutSession = this.renderWorkoutSession.bind(this);
@@ -324,6 +336,15 @@ class App {
   }
 
 
+  // Debounced (re)scheduling of "workout due" local notifications.
+  // No-op on the plain web; only acts inside the native Capacitor app.
+  rescheduleNotifications() {
+    clearTimeout(this._notifyTimer);
+    this._notifyTimer = setTimeout(() => {
+      try { scheduleWorkoutNotifications(this.storage); } catch (e) { console.warn('reschedule failed', e); }
+    }, 600);
+  }
+
   // Download the full training data as a JSON file (no token/network needed).
   downloadBackup() {
     try {
@@ -395,6 +416,17 @@ class App {
         </div>
         <div class="text-xs text-gray-400 mt-2">Saves/loads a JSON file on your device (e.g. to Google Drive). Independent of GitHub — works offline and never needs a token.</div>
       </div>
+      <div class="mt-3 p-3 bg-gray-700 rounded">
+        <div class="text-sm font-semibold mb-2">Workout reminders (Android app)</div>
+        <div class="flex items-center gap-2 flex-wrap">
+          <label class="text-sm">Notify at</label>
+          <select id="notify-hour" class="p-2 bg-gray-600 rounded text-gray-100">
+            ${Array.from({ length: 24 }).map((_, h) => `<option value="${h}" ${clampNotifyHour(this.storage.get('notifyHour')) === h ? 'selected' : ''}>${String(h).padStart(2, '0')}:00</option>`).join('')}
+          </select>
+          <button id="notify-enable" class="px-4 py-2 bg-green-600 text-white rounded">Enable reminders</button>
+        </div>
+        <div class="text-xs text-gray-400 mt-2">Fires a local notification on days a workout is scheduled (plan or recurring). Only active in the installed Android app.</div>
+      </div>
       <div class="flex justify-end gap-3 mt-6">
         <button id="closeOnlySettingsBtn" class="px-4 py-2 bg-gray-600 rounded hover:bg-gray-500">Close</button>
       </div>
@@ -440,6 +472,25 @@ class App {
         rb.addEventListener('click', () => rf.click());
         rf.addEventListener('change', () => { if (rf.files && rf.files[0]) this.restoreFromFile(rf.files[0]); });
       }
+    } catch (e) { /* ignore */ }
+
+    // Workout reminders (Android local notifications)
+    try {
+      const hourSel = modal.querySelector('#notify-hour');
+      if (hourSel) hourSel.addEventListener('change', () => {
+        this.storage.set('notifyHour', clampNotifyHour(hourSel.value));
+        this.rescheduleNotifications();
+        showToast('Reminder time saved');
+      });
+      const enableBtn = modal.querySelector('#notify-enable');
+      if (enableBtn) enableBtn.addEventListener('click', async () => {
+        try {
+          const res = await scheduleWorkoutNotifications(this.storage);
+          if (res.reason === 'no-native') showToast('Reminders work only in the installed Android app');
+          else if (res.reason === 'no-permission') showToast('Notification permission denied');
+          else showToast(`Reminders on — ${res.scheduled} scheduled`);
+        } catch (err) { showToast('Could not enable reminders'); }
+      });
     } catch (e) { /* ignore */ }
 
     // initialize auto-sync toggle button state
@@ -643,6 +694,7 @@ class App {
     if (idx === -1) this.calendar.recurring[dow].push(id);
     else this.calendar.recurring[dow].splice(idx, 1);
     this.storage.set('planRecurring', this.calendar.recurring);
+    this.rescheduleNotifications();
     if (typeof this.renderPlanEditor === 'function') this.renderPlanEditor();
     else if (typeof this.render === 'function') this.render();
   }
@@ -677,10 +729,12 @@ class App {
 
   removeFromDayForCalendar(date, id) {
     this.calendar.removeFromDay(date, id);
+    this.rescheduleNotifications();
   }
 
   toggleActivityCompletedForCalendar(date, id) {
     this.calendar.toggleActivityCompleted(date, id);
+    this.rescheduleNotifications();
   }
 
 

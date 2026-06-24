@@ -5,3 +5,11 @@ backups/
 # Tooling
 node_modules/
 .DS_Store
+
+# Capacitor: generated web build + synced assets (regenerate with `npm run android:sync`)
+www/
+android/app/src/main/assets/public/
+android/app/src/main/assets/capacitor.config.json
+android/app/src/main/assets/capacitor.plugins.json
+android/app/src/main/assets/cordova.js
+android/app/src/main/assets/cordova_plugins.js

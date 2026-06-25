@@ -394,7 +394,6 @@ class App {
     wrap.className = 'fixed inset-0 z-50 flex items-center justify-center';
     const overlay = document.createElement('div');
     overlay.className = 'absolute inset-0 bg-black bg-opacity-50';
-    overlay.onclick = () => wrap.remove();
 
     const modal = document.createElement('div');
     modal.className = 'relative bg-white dark:bg-gray-800 p-6 rounded-lg max-w-lg w-full max-h-[85vh] overflow-y-auto';
@@ -468,6 +467,7 @@ class App {
 
     modal.querySelector('#closeSettingsBtn').onclick = saveAndClose;
     modal.querySelector('#closeOnlySettingsBtn').onclick = saveAndClose;
+    overlay.onclick = saveAndClose;
 
     
 

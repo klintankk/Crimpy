@@ -1,12 +1,26 @@
 /* css/main.css - color tokens are provided at runtime by js/ui.js.
    This file only references CSS variables; palette values are set in JS. */
 
+html, body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
 body {
   font-family: sans-serif;
   margin: 0;
   padding: 0;
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
   background: var(--bg, #ffffff);
   color: var(--text, #0f172a);
+}
+
+#app {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 :root {

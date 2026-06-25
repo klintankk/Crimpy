@@ -396,7 +396,7 @@ class App {
     overlay.onclick = () => wrap.remove();
 
     const modal = document.createElement('div');
-    modal.className = 'relative bg-white dark:bg-gray-800 p-6 rounded-lg max-w-lg w-full';
+    modal.className = 'relative bg-white dark:bg-gray-800 p-6 rounded-lg max-w-lg w-full max-h-[85vh] overflow-y-auto';
 
     modal.innerHTML = `
       <div class="flex items-center justify-between mb-4">
@@ -1065,7 +1065,9 @@ class App {
           if (ts.phase === 'repeaters-rest') {
             ts.repeaterCounter = (ts.repeaterCounter || 0) + 1;
             if (ts.repeaterCounter >= ts.workout.repeaterCount) {
-              // all cycles done → normal inter-set rest (unless this was the final set)
+              // all cycles done → set is over
+              playSound();
+              // normal inter-set rest (unless this was the final set)
               if (ts.currentSet + 1 >= ts.totalSets) {
                 this.finishWorkout();
                 return;
@@ -1099,7 +1101,8 @@ class App {
             return;
           }
           if (ts.phase === 'work-right') {
-            // right work finished → rest or finish
+            // right work finished → set is over → rest or finish
+            playSound();
             const effectiveRest = Math.max(0, (ts.workout.rest || 120) - 5 - (ts.workout.duration || 30));
             if (ts.currentSet + 1 >= ts.totalSets) {
               this.finishWorkout();
@@ -1113,6 +1116,8 @@ class App {
         }
         // ---- normal work/rest ----
         if (ts.phase === 'work') {
+          // set is over
+          playSound();
           // record reps for this set before entering rest
           if (ts.workout.type === 'reps' || ts.workout.type === 'both') {
             ts.inputs = ts.inputs || [];
@@ -1184,6 +1189,7 @@ class App {
     if (ts.repsChecked[index] && (ts.inputs[index] === undefined || ts.inputs[index] === null)) {
       ts.inputs[index] = ts.workout.reps || 0;
     }
+    if (ts.repsChecked[index]) playSound(); // set marked complete
     // if all checked, show note input (don't finish yet)
     // finishWorkout will be called from repsUI_finishWithNote
     this.render();

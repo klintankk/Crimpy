@@ -8,7 +8,7 @@ import { showToast } from './utils.js';
 
 // Bump this on every release whose tag should be offered as an update.
 // Must match the GitHub release tag (with or without a leading "v").
-export const APP_VERSION = '1.0.0';
+export const APP_VERSION = '1.0.1';
 
 const REPO = 'klintankk/Crimpy';
 const APK_FILENAME = 'crimpy-update.apk';

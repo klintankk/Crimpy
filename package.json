@@ -1,6 +1,6 @@
 {
   "name": "crimpd",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Crimpy — a climbing-training PWA (fingerboard, weighted pull-ups, repeaters).",
   "private": true,
   "scripts": {

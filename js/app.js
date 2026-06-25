@@ -9,6 +9,7 @@ import { showToast, showConfetti, playSound, renderSpeakerButton } from './utils
 import { initThemeFromStorage, toggleTheme as toggleThemeHelper, loadSvgSprite } from './ui.js';
 import { renderRepsUI } from './repsSetUI.js';
 import { scheduleWorkoutNotifications } from './notifications.js';
+import { runUpdateFlow, isAndroidApp, APP_VERSION } from './updater.js';
 
 function clampNotifyHour(v) { const h = parseInt(v, 10); return Number.isFinite(h) && h >= 0 && h <= 23 ? h : 8; }
 
@@ -427,6 +428,14 @@ class App {
         </div>
         <div class="text-xs text-gray-400 mt-2">Fires a local notification on days a workout is scheduled (plan or recurring). Only active in the installed Android app.</div>
       </div>
+      <div class="mt-3 p-3 bg-gray-700 rounded">
+        <div class="text-sm font-semibold mb-2">App updates (Android app)</div>
+        <div class="flex items-center gap-2 flex-wrap">
+          <button id="check-update" class="px-4 py-2 bg-blue-600 text-white rounded">Check for updates</button>
+          <span id="update-status" class="text-xs text-gray-400">v${APP_VERSION}</span>
+        </div>
+        <div class="text-xs text-gray-400 mt-2">Downloads the latest APK from GitHub releases and opens the installer. Only active in the installed Android app.</div>
+      </div>
       <div class="flex justify-end gap-3 mt-6">
         <button id="closeOnlySettingsBtn" class="px-4 py-2 bg-gray-600 rounded hover:bg-gray-500">Close</button>
       </div>
@@ -490,6 +499,18 @@ class App {
           else if (res.reason === 'no-permission') showToast('Notification permission denied');
           else showToast(`Reminders on — ${res.scheduled} scheduled`);
         } catch (err) { showToast('Could not enable reminders'); }
+      });
+    } catch (e) { /* ignore */ }
+
+    // App updates (Android: download + install latest APK from GitHub releases)
+    try {
+      const checkBtn = modal.querySelector('#check-update');
+      const statusEl = modal.querySelector('#update-status');
+      if (checkBtn) checkBtn.addEventListener('click', async () => {
+        if (!isAndroidApp()) { showToast('Updates are only available in the Android app'); return; }
+        checkBtn.disabled = true;
+        await runUpdateFlow({ onStatus: (msg) => { if (statusEl) statusEl.textContent = msg; } });
+        checkBtn.disabled = false;
       });
     } catch (e) { /* ignore */ }
 

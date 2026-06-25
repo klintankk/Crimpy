@@ -60,6 +60,30 @@ npx cap open android
 - Android 13+ shows a runtime permission prompt (`POST_NOTIFICATIONS`) the first
   time reminders are enabled.
 
+## In-app updates — how they work
+
+There's no Play Store distribution, so Crimpy checks **GitHub Releases** for
+new versions and self-installs the APK:
+
+- `js/updater.js` compares `APP_VERSION` against the latest release's
+  `tag_name` at `https://api.github.com/repos/klintankk/Crimpy/releases/latest`.
+- Settings → *App updates* → **Check for updates** drives the flow: if the
+  release tag is newer, it downloads the release's `.apk` asset (via
+  `@capacitor/filesystem`, written to the cache dir) and hands it to a small
+  custom native plugin (`ApkInstallerPlugin.java`) that launches the system
+  package installer through a `FileProvider` URI.
+- Android 8+ requires the "Install unknown apps" permission for Crimpy the
+  first time; the button prompts for it (`Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES`)
+  if it isn't already granted.
+- No-op on plain web (no Capacitor) — the button just says updates are
+  Android-only.
+
+**To ship an update**: bump `APP_VERSION` in `js/updater.js` (and ideally
+`package.json`), build the APK, then create a GitHub Release whose tag is
+`v<APP_VERSION>` (or `<APP_VERSION>`) with the built `app-debug.apk` (or a
+release-signed APK) attached as a release asset. Existing installs will see
+it the next time someone taps "Check for updates."
+
 ## After changing the web app
 
 Re-sync before building so the native project picks up the new assets:

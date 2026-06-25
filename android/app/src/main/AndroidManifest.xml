@@ -40,4 +40,6 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <!-- Local notifications for "workout due" reminders (Android 13+ runtime prompt) -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- Self-update: installing a downloaded APK outside the Play Store -->
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
 </manifest>

@@ -436,7 +436,7 @@ class App {
         <div class="text-xs text-gray-400 mt-2">Downloads the latest APK from GitHub releases and opens the installer. Only active in the installed Android app.</div>
       </div>
       <div class="flex justify-end gap-3 mt-6">
-        <button id="closeOnlySettingsBtn" class="px-4 py-2 bg-gray-600 rounded hover:bg-gray-500">Close</button>
+        <button id="closeOnlySettingsBtn" class="px-4 py-2 bg-green-600 rounded hover:bg-green-500">Save &amp; Close</button>
       </div>
     `;
 
@@ -463,6 +463,7 @@ class App {
         }
       } catch (err) { console.error('saveAndClose failed', err); }
       wrap.remove();
+      showToast('Settings saved');
     };
 
     modal.querySelector('#closeSettingsBtn').onclick = saveAndClose;

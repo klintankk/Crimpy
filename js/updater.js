@@ -48,29 +48,36 @@ function findApkAsset(release) {
 }
 
 // Resolve whether a newer release with an APK asset exists.
-// Returns { tag, asset, notes } or null.
+// Always returns a result object — callers must check `status` rather than
+// treating any falsy/null value as "no update", so check failures (network,
+// no releases published yet, rate limit, etc.) can't be mistaken for
+// "up to date".
+//   { status: 'update', tag, asset, notes }
+//   { status: 'up-to-date' }
+//   { status: 'no-asset', tag }
+//   { status: 'error', message }
 export async function checkForUpdate({ silent = false } = {}) {
   if (!isAndroidApp()) {
     if (!silent) showToast('Updates are only available in the Android app');
-    return null;
+    return { status: 'error', message: 'not running in the Android app' };
   }
   try {
     const release = await fetchLatestRelease();
     const tag = release.tag_name || '';
     if (!isNewer(tag, APP_VERSION)) {
       if (!silent) showToast(`You're up to date (v${APP_VERSION})`);
-      return null;
+      return { status: 'up-to-date' };
     }
     const asset = findApkAsset(release);
     if (!asset) {
       if (!silent) showToast(`Update ${tag} found, but it has no APK attached`);
-      return null;
+      return { status: 'no-asset', tag };
     }
-    return { tag, asset, notes: release.body || '' };
+    return { status: 'update', tag, asset, notes: release.body || '' };
   } catch (e) {
     console.warn('checkForUpdate failed', e);
     if (!silent) showToast('Update check failed: ' + e.message);
-    return null;
+    return { status: 'error', message: e.message };
   }
 }
 
@@ -143,17 +150,20 @@ export async function downloadAndInstall(asset, onProgress) {
 export async function runUpdateFlow({ onStatus } = {}) {
   const status = (msg) => { if (onStatus) onStatus(msg); else showToast(msg); };
   status('Checking for updates…');
-  const update = await checkForUpdate({ silent: true });
-  if (!update) { status(`You're up to date (v${APP_VERSION})`); return; }
+  const result = await checkForUpdate({ silent: true });
+
+  if (result.status === 'error') { status('Update check failed: ' + result.message); return; }
+  if (result.status === 'up-to-date') { status(`You're up to date (v${APP_VERSION})`); return; }
+  if (result.status === 'no-asset') { status(`Update ${result.tag} found, but it has no APK attached`); return; }
 
   const proceed = window.confirm(
-    `Crimpy ${update.tag} is available (you have v${APP_VERSION}). Download and install now?`
+    `Crimpy ${result.tag} is available (you have v${APP_VERSION}). Download and install now?`
   );
-  if (!proceed) return;
+  if (!proceed) { status(`Update ${result.tag} available`); return; }
 
   try {
     status('Downloading update… 0%');
-    await downloadAndInstall(update.asset, (fraction) => {
+    await downloadAndInstall(result.asset, (fraction) => {
       if (fraction == null) status('Opening installer…');
       else status(`Downloading update… ${Math.round(fraction * 100)}%`);
     });

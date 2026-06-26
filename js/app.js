@@ -396,7 +396,7 @@ class App {
     overlay.className = 'absolute inset-0 bg-black bg-opacity-50';
 
     const modal = document.createElement('div');
-    modal.className = 'relative bg-white dark:bg-gray-800 p-6 rounded-lg max-w-lg w-full max-h-[85vh] overflow-y-auto';
+    modal.className = 'relative bg-white dark:bg-gray-800 p-6 rounded-lg max-w-lg w-full max-h-[85vh] overflow-y-auto overflow-x-hidden';
 
     modal.innerHTML = `
       <div class="flex items-center justify-between mb-4">
@@ -558,15 +558,15 @@ class App {
       ghForm.innerHTML = `
         <div class="text-sm font-semibold mb-2">Backup to GitHub</div>
         <div class="grid grid-cols-1 gap-2">
-          <input id="gh-repo" class="p-2 bg-gray-600 rounded text-gray-100" placeholder="owner/repo" value="${savedRepo}">
-          <input id="gh-path" class="p-2 bg-gray-600 rounded text-gray-100" placeholder="path (e.g. data/backup.json)" value="${savedPath}">
-          <input id="gh-branch" class="p-2 bg-gray-600 rounded text-gray-100" placeholder="branch" value="${savedBranch}">
-          <input id="gh-token" class="p-2 bg-gray-600 rounded text-gray-100" placeholder="Personal access token (required to write)" value="${savedToken}">
+          <input id="gh-repo" class="p-2 bg-gray-600 rounded text-gray-100 w-full" placeholder="owner/repo" value="${savedRepo}">
+          <input id="gh-path" class="p-2 bg-gray-600 rounded text-gray-100 w-full" placeholder="path (e.g. data/backup.json)" value="${savedPath}">
+          <input id="gh-branch" class="p-2 bg-gray-600 rounded text-gray-100 w-full" placeholder="branch" value="${savedBranch}">
+          <input id="gh-token" class="p-2 bg-gray-600 rounded text-gray-100 w-full" placeholder="Personal access token (required to write)" value="${savedToken}">
           <label class="flex items-center gap-2 text-sm"><input id="gh-remember" type="checkbox" checked> Remember token in browser (needed for auto-save)</label>
-          <input id="gh-message" class="p-2 bg-gray-600 rounded text-gray-100" placeholder="Commit message" value="${savedMessage}">
+          <input id="gh-message" class="p-2 bg-gray-600 rounded text-gray-100 w-full" placeholder="Commit message" value="${savedMessage}">
           <label class="flex items-center gap-2 text-sm"><input id="gh-autoload" type="checkbox" ${savedAutoLoad ? 'checked' : ''}> Auto-load backup on startup</label>
           <label class="flex items-center gap-2 text-sm"><input id="gh-force" type="checkbox"> Force overwrite (bypass SHA check)</label>
-          <div class="text-xs text-gray-400 mt-2">Remote SHA: <span id="gh-remote-sha" class="font-mono text-sm">(unknown)</span> <button id="gh-refresh-sha" class="ml-2 px-2 py-1 bg-gray-600 rounded text-xs">Refresh</button></div>
+          <div class="text-xs text-gray-400 mt-2 flex flex-wrap items-center gap-1">Remote SHA: <span id="gh-remote-sha" class="font-mono text-sm break-all">(unknown)</span> <button id="gh-refresh-sha" class="ml-2 px-2 py-1 bg-gray-600 rounded text-xs">Refresh</button></div>
           <div class="mt-2">
             <button id="gh-forcepush" class="px-3 py-2 bg-red-600 text-white rounded text-sm">Force Push Now</button>
           </div>

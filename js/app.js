@@ -270,24 +270,30 @@ class App {
   }
 
   // Try to auto-load a backup on startup.
-  // First attempt to fetch a local `/data/backup.json` (or configured `githubPath`),
-  // then fall back to GitHub auto-load if configured.
+  // The bundled `/data/backup.json` is only used to SEED a genuinely empty
+  // install. It must never overwrite existing local data: the file can be
+  // served stale from the service-worker cache, and importing it over real
+  // data (combined with the sync merge) previously deleted recent sessions.
   async maybeAutoLoadBackup() {
     try {
       const configuredPath = (this.storage.get('githubPath') || 'data/backup.json').replace(/^\/+/, '');
       const localPath = '/' + configuredPath;
-      try {
-        const res = await fetch(localPath, { cache: 'no-store' });
-        if (res.ok) {
-          const parsed = await res.json();
-          this.storage.import(parsed);
-          console.debug('Auto-loaded local backup from', localPath);
-          if (typeof this.render === 'function') this.render();
-          return;
+      const hasLocalData = ((this.storage.get('log') || []).length > 0) ||
+                           ((this.storage.get('userWorkouts') || []).length > 0);
+      if (!hasLocalData) {
+        try {
+          const res = await fetch(localPath, { cache: 'no-store' });
+          if (res.ok) {
+            const parsed = await res.json();
+            this.storage.import(parsed);
+            this.storage.set('syncBase', parsed);
+            console.debug('Seeded empty install from bundled backup', localPath);
+            if (typeof this.render === 'function') this.render();
+            return;
+          }
+        } catch (err) {
+          console.debug('No bundled backup to seed from at', localPath);
         }
-      } catch (err) {
-        // local fetch failed or not present — continue to GitHub fallback
-        console.debug('Local backup not found at', localPath);
       }
 
       const repoVal = this.storage.get('githubRepo');

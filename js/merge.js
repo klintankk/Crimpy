@@ -89,17 +89,40 @@ function pickAtomic(b, l, r, dflt) {
   return L; // identical or conflict -> local
 }
 
+// Union of records by key — never drops (append-only safe). Local wins on
+// conflicting keys. Base is intentionally ignored: we never treat an entry
+// missing locally as a deletion, so precious history can't be lost by a merge.
+function unionList(local, remote, keyFn) {
+  const m = new Map();
+  (Array.isArray(remote) ? remote : []).forEach(x => { if (x != null) m.set(keyFn(x), x); });
+  (Array.isArray(local) ? local : []).forEach(x => { if (x != null) m.set(keyFn(x), x); });
+  return Array.from(m.values());
+}
+
+// Union of a numeric map keeping the larger value (e.g. PRs = best value).
+function unionMaxMap(local, remote) {
+  const out = {};
+  for (const [k, v] of Object.entries(remote || {})) out[k] = v;
+  for (const [k, v] of Object.entries(local || {})) {
+    out[k] = (typeof v === 'number' && typeof out[k] === 'number') ? Math.max(out[k], v) : v;
+  }
+  return out;
+}
+
 // Merge a whole Crimpy document (base/local/remote -> merged).
 export function mergeDoc(base, local, remote) {
   base = base || {}; local = local || {}; remote = remote || {};
   const out = {
+    // Schedule maps stay deletion-aware (edits/removals sync across devices).
     plan:          merge3Map(base.plan, local.plan, remote.plan),
     planRecurring: merge3Map(base.planRecurring, local.planRecurring, remote.planRecurring),
     planCompleted: merge3Map(base.planCompleted, local.planCompleted, remote.planCompleted),
     planNotes:     merge3Map(base.planNotes, local.planNotes, remote.planNotes),
-    prs:           merge3Map(base.prs, local.prs, remote.prs),
     userWorkouts:  merge3List(base.userWorkouts, local.userWorkouts, remote.userWorkouts, x => String(x.id)),
-    log:           merge3List(base.log, local.log, remote.log, logKey),
+    // Precious, effectively append-only data uses a non-destructive union so a
+    // merge can NEVER lose training history or personal records.
+    log:           unionList(local.log, remote.log, logKey),
+    prs:           unionMaxMap(local.prs, remote.prs),
     progressCategories: pickAtomic(base.progressCategories, local.progressCategories, remote.progressCategories, [])
   };
   // activities are derived from userWorkouts for backward compatibility.
@@ -109,4 +132,4 @@ export function mergeDoc(base, local, remote) {
   return out;
 }
 
-export { merge3Map, merge3List, logKey, canon, eq };
+export { merge3Map, merge3List, unionList, unionMaxMap, logKey, canon, eq };

@@ -39,9 +39,26 @@ test('edit beats a concurrent delete', () => {
   assert.deepStrictEqual(out.userWorkouts, [{ id: 'a', reps: 8 }]);
 });
 
-test('local edit wins a true conflict (LWW)', () => {
+test('local edit wins a true conflict on a 3-way (schedule) collection', () => {
+  const out = mergeDoc({ plan: { d: ['a'] } }, { plan: { d: ['local'] } }, { plan: { d: ['remote'] } });
+  assert.deepStrictEqual(out.plan.d, ['local']);
+});
+
+test('log entries are NEVER dropped by a merge (history is safe)', () => {
+  // base+remote have L1+L2 but local is missing L2 (e.g. stale/wiped local).
+  // The old 3-way merge deleted L2 here — the union merge must keep it.
+  const out = mergeDoc(
+    { log: [{ id: 'L1', date: '2026-01-01' }, { id: 'L2', date: '2026-01-02' }] },
+    { log: [{ id: 'L1', date: '2026-01-01' }] },
+    { log: [{ id: 'L1', date: '2026-01-01' }, { id: 'L2', date: '2026-01-02' }] });
+  assert.deepStrictEqual(out.log.map(e => e.id).sort(), ['L1', 'L2']);
+});
+
+test('prs keep the best (max) value and are never lost', () => {
   const out = mergeDoc({ prs: { x: 10 } }, { prs: { x: 20 } }, { prs: { x: 30 } });
-  assert.strictEqual(out.prs.x, 20);
+  assert.strictEqual(out.prs.x, 30);
+  const out2 = mergeDoc({ prs: { x: 30 } }, {}, { prs: { x: 30, y: 5 } });
+  assert.strictEqual(out2.prs.y, 5);
 });
 
 test('plan: deleting all ids for a date removes the date', () => {

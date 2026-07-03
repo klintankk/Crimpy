@@ -1,5 +1,5 @@
 // sw.js
-const CACHE = 'crimpd-v12';
+const CACHE = 'crimpd-v13';
 const ASSETS = [
   './',
   './index.html',
@@ -44,6 +44,13 @@ self.addEventListener('install', e => {
 });
 
 self.addEventListener('fetch', e => {
+  // Never cache the data backup or any API call — serving a stale copy of the
+  // training data previously caused data loss. Always go to the network for it.
+  const url = e.request.url;
+  if (url.includes('/data/backup.json') || url.includes('api.github.com')) {
+    e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
+    return;
+  }
   e.respondWith(
     caches.match(e.request).then(cached => {
       if (cached) return cached;

@@ -144,6 +144,9 @@
     ],
     "2026-07-24": [
       "0e4adb9e-37ef-4697-a180-0d93927f7db6"
+    ],
+    "2026-07-25": [
+      "0e4adb9e-37ef-4697-a180-0d93927f7db6"
     ]
   },
   "planNotes": {
@@ -194,7 +197,7 @@
       "repeaterWork": null,
       "leftRightMode": false,
       "repeaterCount": null,
-      "depth": 20
+      "depth": 15
     },
     {
       "id": "809403ab-6e27-4658-ae39-bf8c7985c277",
@@ -239,16 +242,16 @@
   ],
   "log": [
     {
-      "id": "5109ec12-3753-4bee-bda1-433d2c3e69e3",
-      "date": "2026-07-24",
+      "id": "b3cd0156-16c2-47ba-87bf-c20ec7fc3d63",
+      "date": "2026-07-25",
       "workoutId": "0e4adb9e-37ef-4697-a180-0d93927f7db6",
       "workoutName": "Science fingerboard",
       "bestValue": 30,
       "isPR": false,
-      "summary": "2 sets × 30 s  20 mm",
+      "summary": "2 sets × 30 s  15 mm — High angle crimp",
       "details": [
-        "Set 1: 30 s  20 mm",
-        "Set 2: 30 s  20 mm"
+        "Set 1: 30 s  15 mm",
+        "Set 2: 30 s  15 mm"
       ]
     },
     {
@@ -266,18 +269,6 @@
     },
     {
       "date": "2026-02-01",
-      "workoutId": "48fb9735-f5cb-42c7-a760-9252acffd091",
-      "workoutName": "Maxhangs",
-      "bestValue": 25,
-      "isPR": false,
-      "summary": "6 sets: 10 mm",
-      "details": [
-        "6 sets: 7 s  10 mm be, last set 10 s"
-      ],
-      "id": "log-mqp3gqsl-mgd6ep"
-    },
-    {
-      "date": "2026-02-01",
       "workoutId": "0e4adb9e-37ef-4697-a180-0d93927f7db6",
       "workoutName": "Science fingerboard",
       "bestValue": 30,
@@ -288,6 +279,18 @@
         "Set 2: 30 s  20 mm"
       ],
       "id": "log-mqp3gqsl-acb4cg"
+    },
+    {
+      "date": "2026-02-01",
+      "workoutId": "48fb9735-f5cb-42c7-a760-9252acffd091",
+      "workoutName": "Maxhangs",
+      "bestValue": 25,
+      "isPR": false,
+      "summary": "6 sets: 10 mm",
+      "details": [
+        "6 sets: 7 s  10 mm be, last set 10 s"
+      ],
+      "id": "log-mqp3gqsl-mgd6ep"
     },
     {
       "date": "2026-01-31",
@@ -363,16 +366,6 @@
     },
     {
       "date": "2026-01-24",
-      "workoutId": null,
-      "workoutName": "Board climbing",
-      "bestValue": 0,
-      "isPR": false,
-      "summary": "Board climbing —Tension board 2 30° Flash 7b 7a+7a+ classic Did 2 7a's",
-      "details": [],
-      "id": "log-mqp3gqsl-64d8kt"
-    },
-    {
-      "date": "2026-01-24",
       "workoutId": "0e4adb9e-37ef-4697-a180-0d93927f7db6",
       "workoutName": "Science fingerboard",
       "bestValue": 30,
@@ -383,6 +376,16 @@
         "Set 2: 30 s  20 mm"
       ],
       "id": "log-mqp3gqsl-6zcyz9"
+    },
+    {
+      "date": "2026-01-24",
+      "workoutId": null,
+      "workoutName": "Board climbing",
+      "bestValue": 0,
+      "isPR": false,
+      "summary": "Board climbing —Tension board 2 30° Flash 7b 7a+7a+ classic Did 2 7a's",
+      "details": [],
+      "id": "log-mqp3gqsl-64d8kt"
     },
     {
       "date": "2026-01-23",
@@ -485,22 +488,22 @@
     {
       "date": "2026-01-15T00:00:00.000Z",
       "workoutId": null,
-      "workoutName": "",
-      "bestValue": 0,
-      "isPR": false,
-      "summary": "Session with Jan hendrik at luchthaven, decent gym, a lot of stairs. \nFlashed a 7a classic on 30deg tension board\nTension board is quite fun",
-      "details": [],
-      "id": "log-mqp3gqsl-gfzlbv"
-    },
-    {
-      "date": "2026-01-15T00:00:00.000Z",
-      "workoutId": null,
       "workoutName": "Climbing",
       "bestValue": 0,
       "isPR": false,
       "summary": "Climbing",
       "details": [],
       "id": "log-mqp3gqsl-1n14m6"
+    },
+    {
+      "date": "2026-01-15T00:00:00.000Z",
+      "workoutId": null,
+      "workoutName": "",
+      "bestValue": 0,
+      "isPR": false,
+      "summary": "Session with Jan hendrik at luchthaven, decent gym, a lot of stairs. \nFlashed a 7a classic on 30deg tension board\nTension board is quite fun",
+      "details": [],
+      "id": "log-mqp3gqsl-gfzlbv"
     },
     {
       "date": "2026-01-15",
@@ -554,22 +557,22 @@
     {
       "date": "2026-01-11T00:00:00.000Z",
       "workoutId": null,
-      "workoutName": "",
-      "bestValue": 0,
-      "isPR": false,
-      "summary": "Session with fuad, barely did any climbs, or so it felt like at least, but it was fun",
-      "details": [],
-      "id": "log-mqp3gqsl-oole5a"
-    },
-    {
-      "date": "2026-01-11T00:00:00.000Z",
-      "workoutId": null,
       "workoutName": "Climbing",
       "bestValue": 0,
       "isPR": false,
       "summary": "Climbing",
       "details": [],
       "id": "log-mqp3gqsl-495iro"
+    },
+    {
+      "date": "2026-01-11T00:00:00.000Z",
+      "workoutId": null,
+      "workoutName": "",
+      "bestValue": 0,
+      "isPR": false,
+      "summary": "Session with fuad, barely did any climbs, or so it felt like at least, but it was fun",
+      "details": [],
+      "id": "log-mqp3gqsl-oole5a"
     },
     {
       "date": "2026-01-11",

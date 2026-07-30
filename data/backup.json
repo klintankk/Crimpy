@@ -128,6 +128,9 @@
     "2026-06-25": [
       "activity:climbing",
       "0e4adb9e-37ef-4697-a180-0d93927f7db6"
+    ],
+    "2026-07-30": [
+      "0e4adb9e-37ef-4697-a180-0d93927f7db6"
     ]
   },
   "planNotes": {
@@ -222,6 +225,19 @@
     }
   ],
   "log": [
+    {
+      "id": "bf63356e-3eb3-453e-8042-b1e0826e8c8c",
+      "date": "2026-07-30",
+      "workoutId": "0e4adb9e-37ef-4697-a180-0d93927f7db6",
+      "workoutName": "Science fingerboard",
+      "bestValue": 30,
+      "isPR": false,
+      "summary": "2 sets × 30 s  15 mm",
+      "details": [
+        "Set 1: 30 s  15 mm",
+        "Set 2: 30 s  15 mm"
+      ]
+    },
     {
       "id": "31f53631-e09e-4b87-acaa-f20d3fc58a54",
       "date": "2026-07-29",
